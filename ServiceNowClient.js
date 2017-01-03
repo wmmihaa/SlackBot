@@ -4,7 +4,7 @@ var querystring = require('querystring');
 
 function ServiceNowClient() {
     // ServiceNow token
-    var token = '8An0x7u0PZx4RDdNB0JXLmpBIlfbKKwSI8_p41DHg87z-UmxP5h6OX499yXtjS1ORBHp6bRVrlbk-k1xtaO8xw';
+    var token = process.env.SNTOKEN;
 
     ServiceNowClient.prototype.myTickets = function (email, callback) {
 
