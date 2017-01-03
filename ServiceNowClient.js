@@ -12,7 +12,6 @@ function ServiceNowClient() {
         var params = querystring.stringify({
             "sysparm_display_value": true,
             "sysparm_limit": 10,
-            "company.u_slack_integration_incoming_token": "yDnfptGRx6dzFFbDHuchcuMC",
             "active": true,
             "caller_id.email": email
         });
