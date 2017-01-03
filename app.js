@@ -23,7 +23,9 @@ var ServiceNowClient = require('./ServiceNowClient.js');
 var serviceNowClient = new ServiceNowClient();
 
 // Event trigged when bot gets started
-bot.on('start', function () { });
+bot.on('start', function () { 
+    console.log("Started");
+});
 
 // Event trigged when a message is sent to the bot
 bot.on('message', function (msg) {
