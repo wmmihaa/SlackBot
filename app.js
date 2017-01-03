@@ -1,17 +1,17 @@
 
 
 var botToken = process.env.BOTTOKEN;
-console.log('BOT TOKEN: ' + botToken);
+
 var Slack = require('slack-node');
 var slack = new Slack(botToken); // Slack API
 var Bot = require('slackbots'); // Slack bot
 
 // Setting up slack bot
-var settings = {
+var botSettings = {
     token: botToken,
     name: 'microServiceBus.bot'
 };
-var bot = new Bot(settings);
+var bot = new Bot(botSettings);
 
 // The botParams is used to set the bot icon and is used in every call
 var botParams = {
@@ -23,19 +23,19 @@ var ServiceNowClient = require('./ServiceNowClient.js');
 var serviceNowClient = new ServiceNowClient();
 
 // Event trigged when bot gets started
-bot.on('start', function () { 
+bot.on('start', function () {
     console.log("Started");
 });
 
 // Event trigged when a message is sent to the bot
 bot.on('message', function (msg) {
-    if (msg.type === 'message' && msg.username != 'microServiceBus.bot') { // Avoid reading its own messages
-        
+    if (msg.type === 'message' && msg.username != botSettings.name) { // Avoid reading its own messages
+
         var userId = msg.user; // Internal userid for the bot 
         var command = msg.text; // The acual message sent to the bot
 
         // First, lets get the user profile (email, name etc).
-        slack.api("users.info", {user: userId}, function (err, response) {
+        slack.api("users.info", { user: userId }, function (err, response) {
 
             var user = response.user;
 
@@ -44,12 +44,13 @@ bot.on('message', function (msg) {
                 user.profile.email = "mikael.hakansson@axians.se";
             }
 
+            // Which command has been called
             // Get all my tickets
-            if((command.toUpperCase() === "MY TICKETS") || (command.toUpperCase() === "TICKETS")) {
+            if ((command.toUpperCase() === "MY TICKETS") || (command.toUpperCase() === "TICKETS")) {
 
                 // Calls using ServiceNow client
                 serviceNowClient.myTickets(user.profile.email, function (err, tickets) {
-                    
+
                     if (!err) { // No errors
 
                         if (tickets.length > 0) { // Has tickets
@@ -76,7 +77,7 @@ bot.on('message', function (msg) {
                 // Strip of command ("CREATE INCIDENT" or "CI"). This leaves the actual parameters which should be 3
                 args = args[0].toUpperCase() === "CI" ? args.splice(1) : args.splice(2);
 
-                if ( args.length != 3) { // Missing parameters
+                if (args.length != 3) { // Missing parameters
                     bot.postMessageToUser(user.name, 'Incufficient parameters for creating an incident.\n Please try:\n*create incident* _title description category_\nEg:\n_create incident "Account locked" "I seem to have looked my account" Account_', botParams);
                 }
                 else {
@@ -94,21 +95,21 @@ bot.on('message', function (msg) {
                     else {
                         // All good. Let's create the incident
                         var incident = {
-                            "short_description": title.replaceAll('"',''), // If user has used quotes, remove them
+                            "short_description": title.replaceAll('"', ''), // If user has used quotes, remove them
                             "caller_id": user.profile.email,
                             "category": category,
-                            "description": description.replaceAll('"',''), // If user has used quotes, remove them
+                            "description": description.replaceAll('"', ''), // If user has used quotes, remove them
                             "priority": 1
                         }
 
                         // Call ServiceNow
-                        serviceNowClient.createIncident(incident, function(err, incidentId){
-                            if(err){
-                                bot.postMessageToUser(user.name, "Sorry " + user.profile.first_name + ", I wasn't able to create the incident", botParams);                                
+                        serviceNowClient.createIncident(incident, function (err, incidentId) {
+                            if (err) {
+                                bot.postMessageToUser(user.name, "Sorry " + user.profile.first_name + ", I wasn't able to create the incident", botParams);
                             }
-                            else{
+                            else {
                                 var uri = "https://axprod.service-now.com/nav_to.do?uri=incident.do?sys_id=" + incidentId;
-                                bot.postMessageToUser(user.name, 'Success ' + user.profile.first_name + ". You incident has been created.\nTo view it, click this link: " + uri , botParams);
+                                bot.postMessageToUser(user.name, 'Success ' + user.profile.first_name + ". You incident has been created.\nTo view it, click this link: " + uri, botParams);
                             }
                         });
                     }
@@ -126,7 +127,7 @@ bot.on('message', function (msg) {
 });
 
 // This prototype adds a replaceAll method to any string. The existing replace method only replaces the first found occurance
-String.prototype.replaceAll = function(search, replacement) {
+String.prototype.replaceAll = function (search, replacement) {
     var target = this;
     return target.replace(new RegExp(search, 'g'), replacement);
 };
