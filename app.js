@@ -1,7 +1,7 @@
 
 
 var botToken = process.env.BOTTOKEN;
-
+//
 var Slack = require('slack-node');
 var slack = new Slack(botToken); // Slack API
 var Bot = require('slackbots'); // Slack bot
