@@ -13,4 +13,4 @@ deviceClient.open(function (err) {
     else{
         console.log('Successfully connected to IoT Hub. '.green)
     }
-});
+});  
