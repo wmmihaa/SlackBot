@@ -1,3 +1,3 @@
 function hello(name){
-    return "hello mrs" + name;
+    return "hello ms" + name;
 } 
