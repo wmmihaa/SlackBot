@@ -1,5 +1,2 @@
 
-
-function(){
-    return "hello";
-}
+//v3
