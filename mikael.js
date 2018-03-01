@@ -1,1 +1,5 @@
-//Mikael
+
+
+function(){
+    return "hello";
+}
