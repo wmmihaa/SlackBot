@@ -21,7 +21,7 @@ var exports = module.exports = {
                 });
 
                 zwave.on('driver failed', function () {
-                    this.ThrowError(null, '00002', ('failed to start driver');
+                    self.ThrowError(null, '00002', 'failed to start driver');
                     zwave.disconnect();
                 });
 
