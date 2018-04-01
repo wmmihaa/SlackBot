@@ -40,7 +40,7 @@ var exports = module.exports = {
                     };
                     self.Debug('node added (' + nodeid + ')');
                     console.log(JSON.stringify(nodes));
-                    self.SubmitMessage(switchNodes, 'application/json', []);
+                    self.SubmitMessage({switchNodes:switchNodes}, 'application/json', []);
                 });
 
                 zwave.on('node ready', function (nodeid, nodeinfo) {
@@ -64,7 +64,7 @@ var exports = module.exports = {
 
                         var values = nodes[nodeid]['classes'][comclass];
                     }
-                    self.SubmitMessage(switchNodes, 'application/json', []);
+                    self.SubmitMessage({switchNodes:switchNodes}, 'application/json', []);
                 });
 
                 zwave.on('value changed', function (nodeid, comclass, value) {
@@ -77,7 +77,7 @@ var exports = module.exports = {
                         console.log("mSB: " + JSON.stringify(value));
                     }
                     nodes[nodeid]['classes'][comclass][value.index] = value;
-                    self.SubmitMessage(switchNodes, 'application/json', []);
+                    self.SubmitMessage({switchNodes:switchNodes}, 'application/json', []);
                 });
 
                 zwave.on('scan complete', function () {
