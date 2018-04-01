@@ -7,7 +7,7 @@ var exports = module.exports = {
     Start: function () {
         self = this;
 
-        this.AddNpmPackage('openzwave-shared', true, function (err) {
+        this.AddNpmPackage('openzwave-shared@1.4.1', true, function (err) {
             if (!err) {
                 let ZWave = require('openzwave-shared');
                 let driverpath = self.GetPropertyValue('static', 'driverpath');
@@ -40,7 +40,7 @@ var exports = module.exports = {
                     };
                     self.Debug('node added (' + nodeid + ')');
                     console.log(JSON.stringify(nodes));
-                    self.SubmitMessage({switchNodes:switchNodes}, 'application/json', []);
+                    self.SubmitMessage({ switchNodes: self.switchNodes }, 'application/json', []);
                 });
 
                 zwave.on('node ready', function (nodeid, nodeinfo) {
@@ -64,7 +64,7 @@ var exports = module.exports = {
 
                         var values = nodes[nodeid]['classes'][comclass];
                     }
-                    self.SubmitMessage({switchNodes:switchNodes}, 'application/json', []);
+                    self.SubmitMessage({ switchNodes: self.switchNodes }, 'application/json', []);
                 });
 
                 zwave.on('value changed', function (nodeid, comclass, value) {
@@ -77,7 +77,7 @@ var exports = module.exports = {
                         console.log("mSB: " + JSON.stringify(value));
                     }
                     nodes[nodeid]['classes'][comclass][value.index] = value;
-                    self.SubmitMessage({switchNodes:switchNodes}, 'application/json', []);
+                    self.SubmitMessage({ switchNodes: self.switchNodes }, 'application/json', []);
                 });
 
                 zwave.on('scan complete', function () {
@@ -97,14 +97,17 @@ var exports = module.exports = {
     },
 
     Stop: function () {
-        zwave.disconnect();
+        if (zwave)
+            zwave.disconnect();
     },
 
     Process: function (state, context) {
-        state.desired.zwaveNodes.forEach(function(n){
-            self.Debug("Updating state: " + n.node_id + "-> " + n.value)
-            zwave.setValue(n.node_id, n.class_id, n.instance, n.value);
-        });
+        if (zwave) {
+            state.desired.zwaveNodes.forEach(function (n) {
+                self.Debug("Updating state: " + n.node_id + "-> " + n.value)
+                zwave.setValue(n.node_id, n.class_id, n.instance, n.value);
+            });
+        }
     },
 
     switchNodes: function () {
