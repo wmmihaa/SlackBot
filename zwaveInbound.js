@@ -10,7 +10,7 @@ var exports = module.exports = {
         this.AddNpmPackage('openzwave-shared', true, function (err) {
             if (!err) {
                 let ZWave = require('openzwave-shared');
-                let driverpath = self.GetPropertyValue('security', 'driverpath');
+                let driverpath = self.GetPropertyValue('static', 'driverpath');
                 zwave = new ZWave({
                     ConsoleOutput: false,
                     driverattempts: 100,
