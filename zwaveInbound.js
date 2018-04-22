@@ -12,7 +12,7 @@ var exports = module.exports = {
                Run();
                startupInterval = setInterval(function(){
                    Stop(function(){
-                       Run();
+                       this.Run();
                    });
                },60000*15);
             }
